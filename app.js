@@ -29,7 +29,7 @@ app.post("/insert", async (req, res) => {
     if (!title || !category || !user) {
       res.status(400).send({ error: "All fields are required" });
     } else {
-      const newMovie = new MovieModel({
+      const newMovie = new Movie({
         title,
         category,
         user,
@@ -38,9 +38,12 @@ app.post("/insert", async (req, res) => {
       res.send({ msg: "Successfull added movie" });
     }
   } catch (e) {
+    console.log(e);
     res.status(500).send({ error: e });
   }
 });
+
+mongoose.connect(process.env.DB_CONNECTION);
 
 app.listen(process.env.PORT, () => {
   console.log(`Application running on port ${process.env.PORT}`);
