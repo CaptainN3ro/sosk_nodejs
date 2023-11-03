@@ -1,23 +1,47 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-require('dotenv/config');
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+require("dotenv/config");
 
 const app = express();
 
-app.use(
-    bodyParser.json(
-        { limit: '30mb', 
-        type: 'application/json'}
-    )
-);
+app.use(bodyParser.json({ limit: "30mb", type: "application/json" }));
 
 app.get("/helloFriend", (req, res) => {
-    res.send("Hallo Freund");
+  res.send("Hallo Freund");
+});
+
+const Movie = require("./models/Movie");
+
+app.get("/list", async (req, res) => {
+  try {
+    const movieData = await Movie.find();
+    res.send({ movies: movieData });
+  } catch (e) {
+    res.status(500).send({ error: e });
+  }
+});
+
+app.post("/insert", async (req, res) => {
+  try {
+    const { title, category, user } = req.body;
+
+    if (!title || !category || !user) {
+      res.status(400).send({ error: "All fields are required" });
+    } else {
+      const newMovie = new MovieModel({
+        title,
+        category,
+        user,
+      });
+      await newMovie.save();
+      res.send({ msg: "Successfull added movie" });
+    }
+  } catch (e) {
+    res.status(500).send({ error: e });
+  }
 });
 
 app.listen(process.env.PORT, () => {
-    console.log(`Application running on port ${process.env.PORT}`)
+  console.log(`Application running on port ${process.env.PORT}`);
 });
-    
-    
